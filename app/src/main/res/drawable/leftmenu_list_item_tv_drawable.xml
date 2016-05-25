@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--选中为红色箭头-->
+    <item android:drawable="@drawable/menu_arr_select" android:state_enabled="true" />
+
+    <!--默认为白色箭头-->
+    <item android:drawable="@drawable/menu_arr_normal" />
+
+</selector>

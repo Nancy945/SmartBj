@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?><!--selector根据enable设置drawable-->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="10dp"
+    android:drawableLeft="@drawable/leftmenu_list_item_tv_drawable"
+    android:drawablePadding="10dp"
+    android:enabled="false"
+    android:padding="10dp"
+    android:text="新闻"
+    android:textColor="@color/leftmenu_list_item_tv_color"
+    android:textSize="20sp" />

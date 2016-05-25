@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--选中为红色-->
+    <item android:color="#ff0000" android:state_enabled="true" />
+
+    <!--默认为白色-->
+    <item android:color="#ffffff" />
+
+
+</selector>
