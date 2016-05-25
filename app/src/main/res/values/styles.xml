@@ -21,8 +21,30 @@
         <item name="android:button">@null</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:gravity">center_horizontal</item>
+    </style>
 
+    <style name="Theme.PageIndicatorDefaults" parent="android:Theme">
+        <item name="vpiTabPageIndicatorStyle">@style/TabPageIndicatorStyle</item>
+    </style>
+
+    <style name="TabPageIndicatorStyle" parent="Widget">
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/tab_indicator</item>
+        <item name="android:paddingLeft">22dip</item>
+        <item name="android:paddingRight">22dip</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:textAppearance">@style/TextAppearance</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/dark_theme</item>
 
     </style>
+
+    <style name="TextAppearance" parent="Widget">
+        <item name="android:textStyle">bold</item>
+        <!--  <item name="android:textColor">@color/dark_theme</item> -->
+    </style>
+
 
 </resources>

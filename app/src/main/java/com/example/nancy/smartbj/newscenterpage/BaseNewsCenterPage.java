@@ -5,6 +5,7 @@ import android.view.View;
 import com.example.nancy.smartbj.activity.MainActivity;
 
 /**
+ * 新闻 专题 组图 互动 的基类
  * Created by Nancy on 2016/5/24.
  */
 public abstract class BaseNewsCenterPage {
@@ -20,13 +21,14 @@ public abstract class BaseNewsCenterPage {
     /**
      * 子类覆盖此方法完成数据的显示
      */
-    public void initData(){
+    public void initData() {
 
     }
+
     /**
      * 子类覆盖此方法完成事件的处理
      */
-    public void initEvent(){
+    public void initEvent() {
 
     }
 

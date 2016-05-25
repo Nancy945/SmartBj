@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 新闻中心
  * Created by Nancy on 2016/5/23.
  */
 public class NewsCenterBaseTagPager extends BaseTagPage {
@@ -85,7 +86,7 @@ public class NewsCenterBaseTagPager extends BaseTagPage {
 
             switch (newsData.type) {
                 case 1://新闻页面
-                    newsPage = new NewsBaseNewsCenterPage(mainActivity);
+                    newsPage = new NewsBaseNewsCenterPage(mainActivity,newsData.children);
                     break;
                 case 10://专题页面
                     newsPage = new TopicBaseNewsCenterPage(mainActivity);
