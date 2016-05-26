@@ -10,8 +10,10 @@ import android.widget.TextView;
 import com.example.nancy.smartbj.R;
 import com.example.nancy.smartbj.activity.MainActivity;
 import com.example.nancy.smartbj.domain.NewsCenterData;
+import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
+import com.lidroid.xutils.view.annotation.event.OnClick;
 import com.viewpagerindicator.TabPageIndicator;
 
 import java.util.ArrayList;
@@ -28,6 +30,55 @@ public class NewsBaseNewsCenterPage extends BaseNewsCenterPage {
     private ViewPager vp_newscenter;
     @ViewInject(R.id.tpi_newscenter_title)
     private TabPageIndicator tpi_newscenter;
+
+    @OnClick(R.id.newscenter_ib_nextpage)
+    public void next(View v) {
+        //切换到下一个界面
+        //此处不会越界，因为在设置的时候源码中有这样一句
+        /**
+         if (item < 0) {
+         ** item = 0;
+         } else if (item >= mAdapter.getCount()) {
+         **item = mAdapter.getCount() - 1;
+         }
+         */
+        vp_newscenter.setCurrentItem(vp_newscenter.getCurrentItem() + 1);
+    }
+
+    @Override
+    public void initEvent() {
+        //要调用tpi的setOnPageChangeListener，而不是viewPage的.否则会产生冲突。实际上是因为tpi的setViewPager方法取消了viewPager的监听器
+        /**
+         * public void setViewPager(ViewPager view) {
+         ...............
+         ***if (mViewPager != null) {
+         ***mViewPager.setOnPageChangeListener(null);
+         }
+         */
+        tpi_newscenter.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                //当页面位于第一个 则可以滑出左侧菜单
+                if(position==0){
+                    //第一个可以滑出
+                    mainActivity.getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
+                }else{
+                    //不可以滑出
+                    mainActivity.getSlidingMenu().setTouchModeAbove(SlidingMenu.TOUCHMODE_NONE);
+                }
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+    }
 
     public NewsBaseNewsCenterPage(MainActivity mainActivity, List<NewsCenterData.NewsData.ViewTagData> children) {
         super(mainActivity);
