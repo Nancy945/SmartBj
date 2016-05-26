@@ -1,5 +1,6 @@
 package com.example.nancy.smartbj.basepages;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.nancy.smartbj.activity.MainActivity;
@@ -10,6 +11,7 @@ import com.example.nancy.smartbj.newscenterpage.NewsBaseNewsCenterPage;
 import com.example.nancy.smartbj.newscenterpage.PhotosBaseNewsCenterPage;
 import com.example.nancy.smartbj.newscenterpage.TopicBaseNewsCenterPage;
 import com.example.nancy.smartbj.utils.MyConstants;
+import com.example.nancy.smartbj.utils.SpTools;
 import com.example.nancy.smartbj.view.LeftMenuFragment;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
@@ -30,6 +32,7 @@ public class NewsCenterBaseTagPager extends BaseTagPage {
 
     private List<BaseNewsCenterPage> newsCenterPages = new ArrayList<>();
     private NewsCenterData newsCenterData;
+    private Gson gson;
 
     public NewsCenterBaseTagPager(MainActivity context) {
         super(context);
@@ -37,7 +40,15 @@ public class NewsCenterBaseTagPager extends BaseTagPage {
 
     public void initData() {
 
-        //1. 获取网络数据
+        //1.获取本地数据
+        String jsonCache = SpTools.getString(mainActivity, MyConstants.NEWSCENTER_URL, "");
+        if(!TextUtils.isEmpty(jsonCache)){
+            //有本地数据
+            //从本地取数据显示
+            parseData(jsonCache);
+        }
+
+        //2. 获取网络数据
         HttpUtils httpUtils = new HttpUtils();
         httpUtils.send(HttpRequest.HttpMethod.GET, MyConstants.NEWSCENTER_URL, new RequestCallBack<String>() {
             @Override
@@ -45,10 +56,12 @@ public class NewsCenterBaseTagPager extends BaseTagPage {
                 //访问数据成功
                 String jsonData = responseInfo.result;
 
+                //保存数据到本地一份
+                SpTools.putString(mainActivity,MyConstants.NEWSCENTER_URL,jsonData);
+
                 Log.e("NewsCenterBaseTagPager", jsonData);
                 //2.解析数据
                 parseData(jsonData);
-
 
             }
 
@@ -62,7 +75,9 @@ public class NewsCenterBaseTagPager extends BaseTagPage {
     }
 
     private void parseData(String jsonData) {
-        Gson gson = new Gson();
+        if(gson == null){
+            gson = new Gson();
+        }
         newsCenterData = gson.fromJson(jsonData, NewsCenterData.class);
 
         //3.数据的处理

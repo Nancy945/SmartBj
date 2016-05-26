@@ -71,7 +71,7 @@ public class GuideActivity extends Activity {
             @Override
             public void onClick(View v) {
                 //保存设置的状态
-                SpTools.setBoolean(GuideActivity.this, MyConstants.IS_SETUP, true);
+                SpTools.putBoolean(GuideActivity.this, MyConstants.IS_SETUP, true);
 
                 //进入主界面
                 Intent main = new Intent(GuideActivity.this, MainActivity.class);
