@@ -23,7 +23,9 @@
         <item name="android:gravity">center_horizontal</item>
     </style>
 
-    <style name="Theme.PageIndicatorDefaults" parent="android:Theme">
+    <style name="PageIndicatorDefaults" parent="Theme.AppCompat">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="vpiTabPageIndicatorStyle">@style/TabPageIndicatorStyle</item>
     </style>
 

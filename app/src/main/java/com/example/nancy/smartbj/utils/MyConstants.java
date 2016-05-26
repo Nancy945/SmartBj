@@ -11,4 +11,5 @@ public interface MyConstants {
     String NEWSCENTER_URL = "http://10.0.2.2:8080/zhbj/categories.json";
     String CONFIG_FILE_NAME = "configFileName";
     String IS_SETUP = "isSetUp";
+    String SERVER_URL = "http://10.0.2.2:8080/zhbj";
 }

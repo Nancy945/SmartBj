@@ -2,14 +2,13 @@ package com.example.nancy.smartbj.newscenterpage;
 
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.example.nancy.smartbj.R;
 import com.example.nancy.smartbj.activity.MainActivity;
 import com.example.nancy.smartbj.domain.NewsCenterData;
+import com.example.nancy.smartbj.newstpipage.TPINewsNewsCenterPager;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.lidroid.xutils.ViewUtils;
 import com.lidroid.xutils.view.annotation.ViewInject;
@@ -132,14 +131,19 @@ public class NewsBaseNewsCenterPage extends BaseNewsCenterPage {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             //要展示的内容
-            TextView tv = new TextView(mainActivity);
-            tv.setText(viewTagDatas.get(position).title);
-            tv.setTextSize(25);
-            tv.setGravity(Gravity.CENTER);
+            TPINewsNewsCenterPager tpiPager = new TPINewsNewsCenterPager(mainActivity, viewTagDatas.get(position));
 
-            container.addView(tv);
+            View rootView = tpiPager.getRootView();
+            container.addView(rootView);
 
-            return tv;
+            return rootView;
+
+//            TextView tv = new TextView(mainActivity);
+//            tv.setText(viewTagDatas.get(position).title);
+//            tv.setTextSize(25);
+//            tv.setGravity(Gravity.CENTER);
+//            container.addView(tv);
+//            return tv;
 
         }
 
