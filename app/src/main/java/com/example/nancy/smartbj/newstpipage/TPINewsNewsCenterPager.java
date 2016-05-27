@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -263,6 +264,44 @@ public class TPINewsNewsCenterPager {
             //把url的图片给iv_lunbo_pic
             //异步加载加载图片,并且显示到组件中
             bitmapUtils.display(iv_lunbo_pic, topImageUrl);
+
+            //给图片添加触摸事件，使其在被点击的状态下停止轮播
+            iv_lunbo_pic.setOnTouchListener(new View.OnTouchListener() {
+
+                private float downX;
+                private float downY;
+                private long downTime;
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            downX = event.getX();
+                            downY = event.getY();
+                            downTime = System.currentTimeMillis();
+                            lunboTask.stopLunbo();//停止定时轮播
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            float upX = event.getX();
+                            float upY = event.getY();
+
+                            //如果是单击（500ms内按下且在同一个地方松起）
+                            if (upX == downX && upY == downY && System.currentTimeMillis() - downTime < 500) {
+                                System.out.println("被单击了");
+                            }
+
+                            lunboTask.startLunboTask();//开始轮播
+
+                            break;
+                        case MotionEvent.ACTION_CANCEL:
+                            lunboTask.startLunboTask();//开始轮播
+
+                            break;
+
+                    }
+                    return true;
+                }
+            });
 
 
             container.addView(iv_lunbo_pic);
