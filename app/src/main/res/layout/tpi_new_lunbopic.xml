@@ -42,7 +42,7 @@
     </RelativeLayout>
 
     <ListView
-        android:background="#44770000"
+        android:id="@+id/lv_tpi_news_listnews"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </LinearLayout>

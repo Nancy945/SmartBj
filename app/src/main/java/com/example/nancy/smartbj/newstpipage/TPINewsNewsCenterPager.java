@@ -8,8 +8,10 @@ import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.nancy.smartbj.R;
@@ -33,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 具体的页签数据 每个页签都公用这个类，数据是实时网络加载的.
  * Created by Nancy on 2016/5/26.
  */
 public class TPINewsNewsCenterPager {
@@ -48,6 +51,8 @@ public class TPINewsNewsCenterPager {
     private TextView tv_pic_desc;//图片的描述信息
     @ViewInject(R.id.ll_tpi_news_pic_points)
     private LinearLayout ll_points;//轮播图对应的点的容器
+    @ViewInject(R.id.lv_tpi_news_listnews)
+    private ListView lv_listnews;
 
     private LunboAdapter lunboAdapter;   //轮播图适配器
 
@@ -55,6 +60,8 @@ public class TPINewsNewsCenterPager {
     private final BitmapUtils bitmapUtils;
     private Gson gson;
     private int picSelectIndex;
+    private List<TPINewsData.TPINewsData_Data.TPINewsData_Data_ListNewsData> listNews = new ArrayList<>();
+    private ListNewsAdapter listNewsAdapter;
 
     public TPINewsNewsCenterPager(MainActivity mainActivity, NewsCenterData.NewsData.ViewTagData viewTagData) {
         this.mainActivity = mainActivity;
@@ -112,6 +119,11 @@ public class TPINewsNewsCenterPager {
         //给轮播图设置设配齐
         vp_lunbo.setAdapter(lunboAdapter);
 
+        //新闻列表的适配器
+        listNewsAdapter = new ListNewsAdapter();
+        //设置新闻列表适配
+        lv_listnews.setAdapter(listNewsAdapter);
+
         //从本地获取数据
         String jsonCache = SpTools.getString(mainActivity, viewTagData.url, "");
         if (!TextUtils.isEmpty(jsonCache)) {
@@ -164,6 +176,18 @@ public class TPINewsNewsCenterPager {
         //4.开始轮播图
         lunboTask.startLunboTask();
         //5.新闻列表的数据
+        setListViewNews(newsData);
+    }
+
+    /**
+     * 设置新闻列表数据
+     *
+     * @param newsData 新闻数据
+     */
+    private void setListViewNews(TPINewsData newsData) {
+        listNews = newsData.data.news;
+        //更新界面
+        listNewsAdapter.notifyDataSetChanged();
     }
 
 
@@ -313,6 +337,60 @@ public class TPINewsNewsCenterPager {
         public void destroyItem(ViewGroup container, int position, Object object) {
 
             container.removeView((View) object);
+        }
+    }
+
+    private class ListNewsAdapter extends BaseAdapter {
+        @Override
+        public int getCount() {
+            return listNews.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder;
+            if (convertView == null) {
+                convertView = View.inflate(mainActivity, R.layout.tpi_news_listview_item, null);
+                holder = new ViewHolder();
+                holder.iv_icon = (ImageView) convertView.findViewById(R.id.iv_tpi_news_listview_item_icon);
+                holder.iv_newspic = (ImageView) convertView.findViewById(R.id.iv_tpi_news_listview_item_pic);
+                holder.tv_title = (TextView) convertView.findViewById(R.id.tv_tpi_news_listview_item_title);
+                holder.tv_time = (TextView) convertView.findViewById(R.id.tv_tpi_news_listview_item_time);
+
+                convertView.setTag(holder);
+
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+            //设置数据
+            TPINewsData.TPINewsData_Data.TPINewsData_Data_ListNewsData newsData = listNews.get(position);
+            //设置标题
+
+            holder.tv_title.setText(newsData.title);
+            //设置时间
+            holder.tv_time.setText(newsData.pubdate);
+            //设置图片
+            bitmapUtils.display(holder.iv_newspic, newsData.listimage);
+            return convertView;
+        }
+
+
+        private class ViewHolder {
+            ImageView iv_newspic;
+            TextView tv_title;
+            TextView tv_time;
+            ImageView iv_icon;
         }
     }
 }

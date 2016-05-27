@@ -24,7 +24,7 @@ public class TPINewsData {
             public String commenturl;
             public String id;
             public String listimage;
-            public String pubdata;
+            public String pubdate;
             public String title;
             public String type;
             public String url;
