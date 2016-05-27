@@ -14,6 +14,7 @@ import com.example.nancy.smartbj.R;
 import com.example.nancy.smartbj.activity.MainActivity;
 import com.example.nancy.smartbj.domain.NewsCenterData;
 import com.example.nancy.smartbj.domain.TPINewsData;
+import com.example.nancy.smartbj.utils.DensityUtil;
 import com.example.nancy.smartbj.utils.MyConstants;
 import com.example.nancy.smartbj.utils.SpTools;
 import com.google.gson.Gson;
@@ -50,6 +51,7 @@ public class TPINewsNewsCenterPager {
     private List<TPINewsData.TPINewsData_Data.TPINewsData_Data_LunboData> lunboDatas = new ArrayList<>();
     private final BitmapUtils bitmapUtils;
     private Gson gson;
+    private int picSelectIndex ;
 
     public TPINewsNewsCenterPager(MainActivity mainActivity, NewsCenterData.NewsData.ViewTagData viewTagData) {
         this.mainActivity = mainActivity;
@@ -70,7 +72,34 @@ public class TPINewsNewsCenterPager {
     }
 
     private void initEvent() {
+        //给轮播图添加页面切换事件
+        vp_lunbo.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                picSelectIndex = position;//记录当前的点击页面
+                setPicDescAndPointSelect(position);//根据页面更新点的样子
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+    }
+
+    private void setPicDescAndPointSelect(int picSelectIndex) {
+        //设置描述信息
+        tv_pic_desc.setText(lunboDatas.get(picSelectIndex).title);
+        //设置点是否选中
+        for (int i = 0; i < lunboDatas.size(); i++) {
+            ll_points.getChildAt(i).setEnabled(i == picSelectIndex);
+        }
     }
 
     private void initData() {
@@ -125,9 +154,30 @@ public class TPINewsNewsCenterPager {
         //1.设置轮播图的数据
         setLunboData(newsData);
         //2.轮播图对应的点处理
+        initPoints();//初始化轮播图的点
         //3.设置图片描述和点的选中效果
+        setPicDescAndPointSelect(picSelectIndex);
         //4.开始轮播图
         //5.新闻列表的数据
+    }
+
+    private void initPoints() {
+        ll_points.removeAllViews();//清空以前存在的点
+        //轮播图有几张，就加几个点
+
+        for (int i = 0; i < lunboDatas.size(); i++) {
+            View v_point = new View(mainActivity);
+            //设置点的背景选择器
+            v_point.setBackgroundResource(R.drawable.point_selector);
+            v_point.setEnabled(false);//默认是灰色的点
+
+            int pointSizePx = DensityUtil.dip2px(mainActivity, 5);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(pointSizePx, pointSizePx);
+            params.leftMargin = DensityUtil.dip2px(mainActivity, 10);
+            //设置参数
+            v_point.setLayoutParams(params);
+            ll_points.addView(v_point);
+        }
     }
 
     private void setLunboData(TPINewsData newsData) {
@@ -146,10 +196,9 @@ public class TPINewsNewsCenterPager {
     private void initView() {
         //页签页面中的根布局，由ViewPager+ListView组成
         root = View.inflate(mainActivity, R.layout.tpi_new_lunbopic, null);
+
         ViewUtils.inject(this, root);
-
     }
-
 
 
     public View getRootView() {
