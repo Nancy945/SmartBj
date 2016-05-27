@@ -1,6 +1,7 @@
 package com.example.nancy.smartbj.newstpipage;
 
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
@@ -36,6 +37,7 @@ import java.util.List;
 public class TPINewsNewsCenterPager {
     private final MainActivity mainActivity;
     private final NewsCenterData.NewsData.ViewTagData viewTagData;//页签对应的数据
+    private final LunboTask lunboTask;
     private View root;
 
     //所有组件
@@ -51,13 +53,14 @@ public class TPINewsNewsCenterPager {
     private List<TPINewsData.TPINewsData_Data.TPINewsData_Data_LunboData> lunboDatas = new ArrayList<>();
     private final BitmapUtils bitmapUtils;
     private Gson gson;
-    private int picSelectIndex ;
+    private int picSelectIndex;
 
     public TPINewsNewsCenterPager(MainActivity mainActivity, NewsCenterData.NewsData.ViewTagData viewTagData) {
         this.mainActivity = mainActivity;
         this.viewTagData = viewTagData;
 
         gson = new Gson();
+        lunboTask = new LunboTask();
 
         //轮播的任务
 //        lunboTask = new LunBoTask();
@@ -158,8 +161,36 @@ public class TPINewsNewsCenterPager {
         //3.设置图片描述和点的选中效果
         setPicDescAndPointSelect(picSelectIndex);
         //4.开始轮播图
+        lunboTask.startLunboTask();
         //5.新闻列表的数据
     }
+
+
+    private class LunboTask {
+        private Handler handler = new Handler();
+
+        public void stopLunbo() {
+            //移除所有callback和消息
+            handler.removeCallbacksAndMessages(null);
+        }
+
+        public void startLunboTask() {
+            stopLunbo();
+
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    //控制轮播图的显示
+                    vp_lunbo.setCurrentItem((vp_lunbo.getCurrentItem() + 1) % vp_lunbo.getAdapter().getCount());
+
+                    handler.postDelayed(this, 2000);
+                }
+            }, 2000);
+
+        }
+    }
+
 
     private void initPoints() {
         ll_points.removeAllViews();//清空以前存在的点
