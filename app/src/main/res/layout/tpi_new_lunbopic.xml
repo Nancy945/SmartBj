@@ -9,7 +9,7 @@
         android:layout_height="175dp"
         android:background="#22000000">
 
-        <android.support.v4.view.ViewPager
+        <com.example.nancy.smartbj.view.InterceptScrollViewPager
             android:id="@+id/vp_tpi_news_lunbo_pic"
             android:layout_width="match_parent"
             android:layout_height="175dp" />
