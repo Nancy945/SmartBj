@@ -250,10 +250,15 @@ public class TPINewsNewsCenterPager {
     }
 
     private void initView() {
-        //页签页面中的根布局，由ViewPager+ListView组成
-        root = View.inflate(mainActivity, R.layout.tpi_new_lunbopic, null);
-
+        //页签页面中的根布局，只有一个ListView （本来还有一个还有一个ViewPager，现在作为listView的头显示）
+        //这样最大的好处在于，可以整体滚动，而不用外套scrollView
+        root = View.inflate(mainActivity, R.layout.tpi_new_content, null);
         ViewUtils.inject(this, root);
+
+        View lunboPic = View.inflate(mainActivity, R.layout.tpi_new_lunbopic, null);
+        ViewUtils.inject(this, lunboPic);
+        //todo 把轮播图加到listView中去
+        lv_listnews.addHeaderView(lunboPic);
     }
 
 
