@@ -27,7 +27,7 @@ public class InterceptScrollViewPager extends ViewPager {
     public boolean dispatchTouchEvent(MotionEvent ev) {
         //true 申请父控件不拦截我的touch事件，false默认父类先拦截事件
 
-        //时间完全由自己处理
+        //事件完全由自己处理
         //如果在第一个页面，并且是从左往右滑动，让父控件拦截我 用来显示侧滑菜单
         //如果在最后一个页面，并且是从右往左滑动，让父控件拦截我 为了让tpi正常工作能够跳到下一个页签
 

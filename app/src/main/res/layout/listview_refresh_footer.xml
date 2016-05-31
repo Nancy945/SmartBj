@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <!--刷新箭头的图片-->
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp">
+
+        <ProgressBar
+            android:id="@+id/pb_listview_footer_loading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateDrawable="@drawable/progressstyleshape" />
+    </FrameLayout>
+
+    <!--状态的描述和更新时间 -->
+
+
+    <TextView
+        android:id="@+id/tv_listview_footer_state_desc"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="下拉刷新"
+        android:textColor="#ff0000"
+        android:textSize="20sp" />
+
+
+</LinearLayout>
