@@ -206,7 +206,9 @@ public class TPINewsNewsCenterPager {
             @Override
             public void onFailure(HttpException error, String msg) {
                 //请求数据失败
+                Toast.makeText(mainActivity, "网络访问失败", Toast.LENGTH_SHORT).show();
                 System.out.println("网络访问失败:" + error.toString());
+                lv_listnews.refreshStateFinish();
             }
         });
     }
