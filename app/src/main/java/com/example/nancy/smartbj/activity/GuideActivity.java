@@ -22,7 +22,7 @@ import com.example.nancy.smartbj.utils.SpTools;
 import java.util.ArrayList;
 
 /**
- *  第一次启动才有的介绍或者广告轮播界面
+ * 第一次启动才有的介绍或者广告轮播界面
  */
 public class GuideActivity extends Activity {
 
@@ -44,15 +44,15 @@ public class GuideActivity extends Activity {
     }
 
     private void initEvent() {
-        //监听布局完成，触发的结果
-        v_redpoint.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+//        //监听布局完成，触发的结果
+        ll_points.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
                 //因为会多次监听，没有必要。所以在第一次回调就取消注册就行
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     //API16 才有这个方法
                     v_redpoint.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                }else {
+                } else {
                     //老版本就用过时方法就行
                     v_redpoint.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                 }
@@ -60,7 +60,6 @@ public class GuideActivity extends Activity {
                 //两个点间的距离等于 自身的宽度+marginLeft
 //                System.out.println("两个点间的距离"+(ll_points.getChildAt(1).getLeft() - ll_points.getChildAt(0).getLeft()));
                 pointsDistance = ll_points.getChildAt(1).getLeft() - ll_points.getChildAt(0).getLeft();
-
 
 
             }
@@ -143,9 +142,9 @@ public class GuideActivity extends Activity {
 
             //设置点的大小
             int px_10dp = DensityUtil.dip2px(this, 10);//10个dp对应的px
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(px_10dp,px_10dp);//todo 构造函数中的单位是px，xml中的单位是dp
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(px_10dp, px_10dp);//todo 构造函数中的单位是px，xml中的单位是dp
             //设置点与点之间的间隙
-            if(i!= 0){
+            if (i != 0) {
                 params.leftMargin = px_10dp;//单位也是px
             }
             v_point.setLayoutParams(params);
@@ -154,9 +153,10 @@ public class GuideActivity extends Activity {
 
         }
 
-        //此方法不可行，因为，点的位置是确定不了的。布局完成，才能求出left值
+        //todo 此方法不可行，因为，点的位置是确定不了的。layout完成，才能求出left值
 //        System.out.println("两个点间的距离"+(ll_points.getChildAt(1).getLeft() - ll_points.getChildAt(1).getLeft()))
         //所以改用getViewTreeObserver的方法，在initEvent中设置了时间
+
 
         //创建ViewPager的适配器
         adapter = new MyAdapter();

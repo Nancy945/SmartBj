@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/listview_refresh_header"/>
+    <include
+        layout="@layout/listview_refresh_header"/>
 
 </LinearLayout>

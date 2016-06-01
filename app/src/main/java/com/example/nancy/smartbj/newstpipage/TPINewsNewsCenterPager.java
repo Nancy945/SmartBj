@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.nancy.smartbj.R;
 import com.example.nancy.smartbj.activity.MainActivity;
@@ -21,6 +21,7 @@ import com.example.nancy.smartbj.domain.TPINewsData;
 import com.example.nancy.smartbj.utils.DensityUtil;
 import com.example.nancy.smartbj.utils.MyConstants;
 import com.example.nancy.smartbj.utils.SpTools;
+import com.example.nancy.smartbj.view.RefreshListView;
 import com.google.gson.Gson;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.HttpUtils;
@@ -52,7 +53,7 @@ public class TPINewsNewsCenterPager {
     @ViewInject(R.id.ll_tpi_news_pic_points)
     private LinearLayout ll_points;//轮播图对应的点的容器
     @ViewInject(R.id.lv_tpi_news_listnews)
-    private ListView lv_listnews;
+    private RefreshListView  lv_listnews;
 
     private LunboAdapter lunboAdapter;   //轮播图适配器
 
@@ -62,6 +63,8 @@ public class TPINewsNewsCenterPager {
     private int picSelectIndex;
     private List<TPINewsData.TPINewsData_Data.TPINewsData_Data_ListNewsData> listNews = new ArrayList<>();
     private ListNewsAdapter listNewsAdapter;
+    private boolean isRefresh;
+    private String loadingMoreDatasUrl;
 
     public TPINewsNewsCenterPager(MainActivity mainActivity, NewsCenterData.NewsData.ViewTagData viewTagData) {
         this.mainActivity = mainActivity;
@@ -102,6 +105,27 @@ public class TPINewsNewsCenterPager {
             }
         });
 
+        lv_listnews.setOnRefreshDataListener(new RefreshListView.onRefreshDataListener() {
+            @Override
+            public void refreshData() {
+                isRefresh = true;
+                getDataFromNet(MyConstants.SERVER_URL + viewTagData.url,false);
+            }
+
+            @Override
+            public void loadingMore() {
+                if(TextUtils.isEmpty(loadingMoreDatasUrl)){
+                    Toast.makeText(mainActivity, "没有更多数据", Toast.LENGTH_SHORT).show();
+                    //关闭刷新数据状态
+                    lv_listnews.refreshStateFinish();
+                }else{
+                    System.out.println("url:"+ loadingMoreDatasUrl);
+                    //有数据
+                    getDataFromNet(loadingMoreDatasUrl,true);
+                }
+            }
+        });
+
     }
 
     private void setPicDescAndPointSelect(int picSelectIndex) {
@@ -133,17 +157,19 @@ public class TPINewsNewsCenterPager {
             processData(newsData);
         }
 
+        loadingMoreDatasUrl = MyConstants.SERVER_URL + viewTagData.url;
         //从网络获取数据
-        getDataFromNet();
+        getDataFromNet(loadingMoreDatasUrl, false);//从网络获取数据
 
 
     }
 
-    private void getDataFromNet() {
+    private void getDataFromNet(final String url,final boolean isLoadingMore) {
         HttpUtils httpUtils = new HttpUtils();
-        httpUtils.send(HttpRequest.HttpMethod.GET, MyConstants.SERVER_URL + viewTagData.url, new RequestCallBack<String>() {
+        httpUtils.send(HttpRequest.HttpMethod.GET, url, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
+                System.out.println("网络请求成功："+responseInfo.result);
                 //请求数据成功
                 String jsonData = responseInfo.result;
                 //保存数据到本地
@@ -152,8 +178,28 @@ public class TPINewsNewsCenterPager {
                 //解析数据
                 TPINewsData newsData = parseJson(jsonData);
 
-                //处理数据
-                processData(newsData);
+                //判断是否是加载更多数据
+                if(isLoadingMore){
+                    //原有数据+ 新数据
+                    listNews.addAll(newsData.data.news);
+
+                    //更新界面
+                    lunboAdapter.notifyDataSetChanged();
+                    Toast.makeText(mainActivity, "加载数据成功", Toast.LENGTH_SHORT).show();
+                }else{
+                    //第一次取数据或刷新数据
+                    //处理数据
+                    processData(newsData);
+
+                    if(isRefresh){
+                        //设置listVIew头隐藏
+                        Toast.makeText(mainActivity, "刷新数据成功", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                lv_listnews.refreshStateFinish();
+
+
 
             }
 
