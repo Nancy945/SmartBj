@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.nancy.smartbj.activity.SplashActivity">
+    tools:activity="com.example.nancy.smartbj.activity.SplashActivity">
 
     <ImageView
         android:id="@+id/iv_splash_mainview"

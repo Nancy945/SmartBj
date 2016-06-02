@@ -144,5 +144,6 @@ public class NewsCenterBaseTagPager extends BaseTagPage {
         //替换掉白纸
         fl_content.addView(baseNewsCenterPage.getRoot());
 
+
     }
 }
