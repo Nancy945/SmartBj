@@ -1,6 +1,8 @@
 package com.example.nancy.smartbj.newstpipage;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -8,6 +10,7 @@ import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -16,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.nancy.smartbj.R;
 import com.example.nancy.smartbj.activity.MainActivity;
+import com.example.nancy.smartbj.activity.NewsDetailActivity;
 import com.example.nancy.smartbj.domain.NewsCenterData;
 import com.example.nancy.smartbj.domain.TPINewsData;
 import com.example.nancy.smartbj.utils.DensityUtil;
@@ -53,7 +57,7 @@ public class TPINewsNewsCenterPager {
     @ViewInject(R.id.ll_tpi_news_pic_points)
     private LinearLayout ll_points;//轮播图对应的点的容器
     @ViewInject(R.id.lv_tpi_news_listnews)
-    private RefreshListView  lv_listnews;
+    private RefreshListView lv_listnews;
 
     private LunboAdapter lunboAdapter;   //轮播图适配器
 
@@ -86,6 +90,44 @@ public class TPINewsNewsCenterPager {
     }
 
     private void initEvent() {
+        //给新闻添加点击事件
+        lv_listnews.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //todo 这里考虑了header，所以当点击listView的第一条的时候显示的不是0，而是1！
+                //todo Adapter中的getView方法没有考虑header，所以点击listView中第一个条目的时候显示的是0!
+                //获取当前点击的新闻链接
+                TPINewsData.TPINewsData_Data.TPINewsData_Data_ListNewsData tpiNewsData_data_listNewsData = listNews.get(position - 1);
+                String newsUrl = tpiNewsData_data_listNewsData.url;
+                //获取新闻的id
+                String newsId = tpiNewsData_data_listNewsData.id;
+
+                //获取新闻的标记id
+
+                String readIds = SpTools.getString(mainActivity, MyConstants.READNEWS_IDS, null);
+                if (TextUtils.isEmpty(readIds)) {
+                    //还没有保存过id
+                    readIds = newsId;//保存当前新闻的id
+                } else {
+                    //添加保存新闻id
+                    readIds += "," + newsId;
+                }
+                //保存读过的IDs到SP中
+                SpTools.putString(mainActivity, MyConstants.READNEWS_IDS, readIds);
+
+                //修改读过的新闻字体颜色
+                //告诉界面更新
+                listNewsAdapter.notifyDataSetChanged();
+
+                //跳转到新闻页面
+                Intent intent = new Intent(mainActivity, NewsDetailActivity.class);
+                intent.putExtra("newsurl", newsUrl);
+                mainActivity.startActivity(intent);
+
+
+            }
+        });
+
         //给轮播图添加页面切换事件
         vp_lunbo.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -109,19 +151,19 @@ public class TPINewsNewsCenterPager {
             @Override
             public void refreshData() {
                 isRefresh = true;
-                getDataFromNet(MyConstants.SERVER_URL + viewTagData.url,false);
+                getDataFromNet(MyConstants.SERVER_URL + viewTagData.url, false);
             }
 
             @Override
             public void loadingMore() {
-                if(TextUtils.isEmpty(loadingMoreDatasUrl)){
+                if (TextUtils.isEmpty(loadingMoreDatasUrl)) {
                     Toast.makeText(mainActivity, "没有更多数据", Toast.LENGTH_SHORT).show();
                     //关闭刷新数据状态
                     lv_listnews.refreshStateFinish();
-                }else{
-                    System.out.println("url:"+ loadingMoreDatasUrl);
+                } else {
+                    System.out.println("url:" + loadingMoreDatasUrl);
                     //有数据
-                    getDataFromNet(loadingMoreDatasUrl,true);
+                    getDataFromNet(loadingMoreDatasUrl, true);
                 }
             }
         });
@@ -164,12 +206,12 @@ public class TPINewsNewsCenterPager {
 
     }
 
-    private void getDataFromNet(final String url,final boolean isLoadingMore) {
+    private void getDataFromNet(final String url, final boolean isLoadingMore) {
         HttpUtils httpUtils = new HttpUtils();
         httpUtils.send(HttpRequest.HttpMethod.GET, url, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                System.out.println("网络请求成功："+responseInfo.result);
+                System.out.println("网络请求成功：" + responseInfo.result);
                 //请求数据成功
                 String jsonData = responseInfo.result;
                 //保存数据到本地
@@ -179,26 +221,25 @@ public class TPINewsNewsCenterPager {
                 TPINewsData newsData = parseJson(jsonData);
 
                 //判断是否是加载更多数据
-                if(isLoadingMore){
+                if (isLoadingMore) {
                     //原有数据+ 新数据
                     listNews.addAll(newsData.data.news);
 
                     //更新界面
                     lunboAdapter.notifyDataSetChanged();
                     Toast.makeText(mainActivity, "加载数据成功", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     //第一次取数据或刷新数据
                     //处理数据
                     processData(newsData);
 
-                    if(isRefresh){
+                    if (isRefresh) {
                         //设置listVIew头隐藏
                         Toast.makeText(mainActivity, "刷新数据成功", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 lv_listnews.refreshStateFinish();
-
 
 
             }
@@ -428,8 +469,18 @@ public class TPINewsNewsCenterPager {
 
             //设置数据
             TPINewsData.TPINewsData_Data.TPINewsData_Data_ListNewsData newsData = listNews.get(position);
-            //设置标题
+            //判断该新闻是否读取过
+            String newsId = newsData.id;
+            String readNewsIds = SpTools.getString(mainActivity, MyConstants.READNEWS_IDS, null);
+            if (TextUtils.isEmpty(readNewsIds) || !readNewsIds.contains(newsId)) {
+                //空 或者没有保存过id
+                holder.tv_title.setTextColor(Color.BLACK);
+            } else {
+                //读过该新闻
+                holder.tv_title.setTextColor(Color.GRAY);
+            }
 
+            //设置标题
             holder.tv_title.setText(newsData.title);
             //设置时间
             holder.tv_time.setText(newsData.pubdate);

@@ -21,8 +21,7 @@
         <activity
             android:name=".activity.MainActivity"
             android:theme="@style/PageIndicatorDefaults" />
-
-
+        <activity android:name=".activity.NewsDetailActivity"></activity>
     </application>
 
 </manifest>
