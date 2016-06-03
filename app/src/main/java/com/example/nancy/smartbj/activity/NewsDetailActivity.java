@@ -140,6 +140,7 @@ public class NewsDetailActivity extends AppCompatActivity {
 
         //显示新闻
         wv_news = (WebView) findViewById(R.id.wv_newscenter_newsdetail);
+
         //控制webView的显示设置
         wv_setting = wv_news.getSettings();
         //设置可以放大和缩小(右下角有个+和-的按钮)
@@ -152,6 +153,11 @@ public class NewsDetailActivity extends AppCompatActivity {
         //加载新闻的进度条
         pb_loadingNews = (ProgressBar) findViewById(R.id.pb_newscenter_newsdetail_loading);
 
+    }
 
+    @Override
+    protected void onStop() {
+        wv_news.destroy();
+        super.onStop();
     }
 }

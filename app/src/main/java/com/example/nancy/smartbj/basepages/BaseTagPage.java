@@ -2,6 +2,7 @@ package com.example.nancy.smartbj.basepages;
 
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.nancy.smartbj.R;
@@ -17,6 +18,7 @@ public class BaseTagPage {
     protected TextView tv_title;
     protected FrameLayout fl_content;
     protected View root;
+    protected ImageButton ib_listOrGrid;
 
     public BaseTagPage(MainActivity context) {
         this.mainActivity = context;
@@ -35,6 +37,8 @@ public class BaseTagPage {
         ib_menu = root.findViewById(R.id.ib_base_content_menu);
         tv_title = (TextView) root.findViewById(R.id.tv_base_content_title);
         fl_content = (FrameLayout) root.findViewById(R.id.fl_base_content_tag);
+
+        ib_listOrGrid = (ImageButton)root.findViewById(R.id.ib_base_content_listorgrid);
     }
 
     //子类根据需要选择是否复写

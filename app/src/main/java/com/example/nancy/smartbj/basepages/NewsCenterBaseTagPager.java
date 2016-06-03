@@ -2,6 +2,7 @@ package com.example.nancy.smartbj.basepages;
 
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 
 import com.example.nancy.smartbj.activity.MainActivity;
 import com.example.nancy.smartbj.domain.NewsCenterData;
@@ -42,7 +43,7 @@ public class NewsCenterBaseTagPager extends BaseTagPage {
 
         //1.获取本地数据
         String jsonCache = SpTools.getString(mainActivity, MyConstants.NEWSCENTER_URL, "");
-        if(!TextUtils.isEmpty(jsonCache)){
+        if (!TextUtils.isEmpty(jsonCache)) {
             //有本地数据
             //从本地取数据显示
             parseData(jsonCache);
@@ -57,7 +58,7 @@ public class NewsCenterBaseTagPager extends BaseTagPage {
                 String jsonData = responseInfo.result;
 
                 //保存数据到本地一份
-                SpTools.putString(mainActivity,MyConstants.NEWSCENTER_URL,jsonData);
+                SpTools.putString(mainActivity, MyConstants.NEWSCENTER_URL, jsonData);
 
                 Log.e("NewsCenterBaseTagPager", jsonData);
                 //2.解析数据
@@ -75,7 +76,7 @@ public class NewsCenterBaseTagPager extends BaseTagPage {
     }
 
     private void parseData(String jsonData) {
-        if(gson == null){
+        if (gson == null) {
             gson = new Gson();
         }
         newsCenterData = gson.fromJson(jsonData, NewsCenterData.class);
@@ -101,7 +102,7 @@ public class NewsCenterBaseTagPager extends BaseTagPage {
 
             switch (newsData.type) {
                 case 1://新闻页面
-                    newsPage = new NewsBaseNewsCenterPage(mainActivity,newsData.children);
+                    newsPage = new NewsBaseNewsCenterPage(mainActivity, newsData.children);
                     break;
                 case 10://专题页面
                     newsPage = new TopicBaseNewsCenterPage(mainActivity);
@@ -140,6 +141,24 @@ public class NewsCenterBaseTagPager extends BaseTagPage {
 
         //初始化数据
         baseNewsCenterPage.initData();
+
+        //判断 如果是组图listGrid 切换的按钮显示
+        if (baseNewsCenterPage instanceof PhotosBaseNewsCenterPage) {
+            //如果是组图
+            //显示listgrid切换的按钮
+            ib_listOrGrid.setVisibility(View.VISIBLE);
+            //给时间，点击做list和grid切换
+            ib_listOrGrid.setTag(baseNewsCenterPage);
+            ib_listOrGrid.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((PhotosBaseNewsCenterPage) ib_listOrGrid.getTag()).switchListViewOrGridView(ib_listOrGrid);
+                }
+            });
+        } else {
+            //隐藏listgrid切换的按钮显示
+            ib_listOrGrid.setVisibility(View.GONE);
+        }
 
         //替换掉白纸
         fl_content.addView(baseNewsCenterPage.getRoot());
