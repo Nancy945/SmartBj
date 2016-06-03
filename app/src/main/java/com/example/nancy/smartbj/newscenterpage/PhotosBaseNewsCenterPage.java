@@ -7,6 +7,7 @@ import android.widget.TextView;
 import com.example.nancy.smartbj.activity.MainActivity;
 
 /**
+ * 组图
  * Created by Nancy on 2016/5/24.
  */
 public class PhotosBaseNewsCenterPage extends BaseNewsCenterPage {

@@ -30,4 +30,15 @@ dependencies {
     compile project(':xutilsLib')
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.github.JakeWharton:ViewPagerIndicator:2.4.1'
+    compile files('libs/MobCommons-2016.0406.1915.jar')
+    compile files('libs/MobTools-2016.0406.1915.jar')
+    compile files('libs/ShareSDK-Alipay-2.7.1.jar')
+    compile files('libs/ShareSDK-Core-2.7.1.jar')
+    compile files('libs/ShareSDK-Email-2.7.1.jar')
+    compile files('libs/ShareSDK-Evernote-2.7.1.jar')
+    compile files('libs/ShareSDK-QZone-2.7.1.jar')
+    compile files('libs/ShareSDK-SinaWeibo-2.7.1.jar')
+    compile files('libs/ShareSDK-Wechat-2.7.1.jar')
+    compile files('libs/ShareSDK-Wechat-Core-2.7.1.jar')
+    compile files('libs/ShareSDK-Wechat-Moments-2.7.1.jar')
 }

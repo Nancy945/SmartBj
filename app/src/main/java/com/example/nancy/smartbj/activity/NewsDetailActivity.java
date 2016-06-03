@@ -1,16 +1,20 @@
 package com.example.nancy.smartbj.activity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.nancy.smartbj.R;
+import com.example.nancy.smartbj.utils.ShareAppUtils;
 
 public class NewsDetailActivity extends AppCompatActivity {
 
@@ -34,14 +38,86 @@ public class NewsDetailActivity extends AppCompatActivity {
     }
 
     private void initEvent() {
+        //创建三个按钮公共的监听器
+        View.OnClickListener listener = new View.OnClickListener() {
+            int textSizeIndex = 2;
+
+            @Override
+            public void onClick(View v) {
+                switch (v.getId()) {
+                    case R.id.ib_base_content_back://返回键
+                        //关闭当前新闻页面
+                        finish();
+                        break;
+                    case R.id.ib_base_content_textsize://修改字体大小
+                        //通过对话框来修改字体大小的五种
+                        showChangeTextSizeDialog();
+                        break;
+                    case R.id.ib_base_content_share://分享
+                        ShareAppUtils.showShare(getApplication());
+                        break;
+                }
+            }
+
+            private void showChangeTextSizeDialog() {
+                AlertDialog dialog = new AlertDialog.Builder(NewsDetailActivity.this).setTitle("改变字体大小")
+                        .setSingleChoiceItems(new String[]{"超大号", "大号", "正常", "小号", "超小号"}, textSizeIndex, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                textSizeIndex = which;
+                                setTextSize();
+                                dialog.dismiss();
+                            }
+
+                        }).create();
+                dialog.show();
+            }
+
+            private void setTextSize() {
+                switch (textSizeIndex) {
+                    case 0://超大号
+                        wv_setting.setTextZoom(200);
+                        break;
+                    case 1://大号
+                        wv_setting.setTextZoom(150);
+                        break;
+                    case 2://正常
+                        wv_setting.setTextZoom(100);
+                        break;
+                    case 3://小号
+                        wv_setting.setTextZoom(75);
+                        break;
+                    case 4://超小号
+                        wv_setting.setTextZoom(50);
+                        break;
+
+                }
+
+            }
+        };
+
+        //给三个键添加监听器
+        ib_back.setOnClickListener(listener);
+        ib_share.setOnClickListener(listener);
+        ib_setTextSize.setOnClickListener(listener);
+
+        //给webView添加一个新闻加载完成的监听事件
+        wv_news.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                //页面加载完成时 隐藏进度条
+                pb_loadingNews.setVisibility(View.GONE);
+            }
+        });
 
     }
 
+
     private void initData() {
         String url = getIntent().getStringExtra("newsurl");
-        if(TextUtils.isEmpty(url)){
+        if (TextUtils.isEmpty(url)) {
             Toast.makeText(this, "链接错误", Toast.LENGTH_SHORT).show();
-        }else{
+        } else {
             //有新闻 就加载新闻
             wv_news.loadUrl(url);
         }
